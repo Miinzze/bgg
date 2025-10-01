@@ -1,0 +1,16 @@
+[2025-10-01 07:34:40] User: admin (ID: 1) | IP: 80.151.166.21 | Action: login | Details: Successful login
+[2025-10-01 08:40:13] User: admin (ID: 1) | IP: 80.151.166.21 | Action: login | Details: Successful login
+[2025-10-01 12:42:30] User: admin (ID: 1) | IP: 80.187.102.4 | Action: login | Details: Successful login
+[2025-10-01 12:49:11] User: admin (ID: 1) | IP: 80.187.102.4 | Action: logout | Details: User logged out
+[2025-10-01 12:49:19] User: admin (ID: 1) | IP: 80.187.102.4 | Action: login | Details: Successful login
+[2025-10-01 13:17:19] User: admin (ID: 1) | IP: 80.151.166.21 | Action: object_created | Details: Object created: Lagergerät GX74K-V (ID: 10)
+[2025-10-01 13:17:40] User: admin (ID: 1) | IP: 80.151.166.21 | Action: storage_color_updated | Details: Storage device color updated to: #ff0000
+[2025-10-01 13:17:40] User: admin (ID: 1) | IP: 80.151.166.21 | Action: settings_updated | Details: Map display settings updated
+[2025-10-01 16:07:24] User: admin (ID: 1) | IP: 80.151.166.21 | Action: storage_color_updated | Details: Storage device color updated to: #002aff
+[2025-10-01 16:07:24] User: admin (ID: 1) | IP: 80.151.166.21 | Action: settings_updated | Details: Map display settings updated
+[2025-10-01 16:49:28] User: admin (ID: 1) | IP: 80.151.166.21 | Action: user_updated | Details: User updated: admin (ID: 1)
+[2025-10-01 19:57:57] User: admin (ID: 1) | IP: 109.43.115.64 | Action: logout | Details: User logged out
+[2025-10-01 19:58:06] User: admin (ID: 1) | IP: 109.43.115.64 | Action: login | Details: Successful login
+[2025-10-01 20:07:37] User: admin (ID: 1) | IP: 109.43.115.64 | Action: object_updated | Details: Object updated: Test Gerät (ID: 9)
+[2025-10-01 20:07:48] User: admin (ID: 1) | IP: 109.43.115.64 | Action: object_updated | Details: Object updated: Test Gerät (ID: 9)
+[2025-10-01 20:09:35] User: admin (ID: 1) | IP: 104.28.54.55 | Action: login | Details: Successful login

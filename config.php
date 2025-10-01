@@ -27,15 +27,50 @@ define('DEFAULT_MAINTENANCE_INTERVAL', 180); // Standard: 6 Monate
 define('MAINTENANCE_WARNING_DAYS', 7); // Warnung 7 Tage vorher
 
 // E-Mail-Konfiguration
-define('SEND_EMAIL_NOTIFICATIONS', true); // E-Mail-Benachrichtigungen aktivieren
+define('SEND_EMAIL_NOTIFICATIONS', true);
 define('EMAIL_FROM_ADDRESS', 'noreply@' . $_SERVER['HTTP_HOST']);
 define('EMAIL_FROM_NAME', SYSTEM_NAME);
 
-// Session starten
+// ===== NEUE SICHERHEITS-EINSTELLUNGEN =====
+
+// Session-Timeout (in Sekunden) - Standard: 30 Minuten
+define('SESSION_TIMEOUT', 1800);
+
+// Session-Warnung vor Ablauf (in Sekunden) - Standard: 5 Minuten
+define('SESSION_WARNING_TIME', 300);
+
+// Login-Versuche limitieren
+define('MAX_LOGIN_ATTEMPTS', 5); // Maximale Fehlversuche
+define('LOGIN_LOCKOUT_TIME', 900); // Sperrzeit in Sekunden (15 Minuten)
+define('LOGIN_ATTEMPT_WINDOW', 300); // Zeitfenster für Versuche in Sekunden (5 Minuten)
+
+// Audit-Log Einstellungen
+define('AUDIT_LOG_ENABLED', true);
+define('AUDIT_LOG_PATH', 'logs/audit/');
+define('AUDIT_LOG_RETENTION_DAYS', 365); // Logs 1 Jahr aufbewahren
+
+// IP-Whitelist (optional - leer lassen für keine Einschränkung)
+define('IP_WHITELIST', []); // Beispiel: ['192.168.1.100', '10.0.0.1']
+
+// ============================================
+
+// Session starten mit erweiterten Sicherheitseinstellungen
 if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
+    // Session-Cookie-Parameter setzen
+    session_set_cookie_params([
+        'lifetime' => SESSION_TIMEOUT,
+        'path' => '/',
+        'domain' => $_SERVER['HTTP_HOST'],
+        'secure' => isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on',
+        'httponly' => true,
+        'samesite' => 'Strict'
+    ]);
+    
     session_start();
+    
+    // Session-Timeout prüfen
+    SessionManager::checkTimeout();
 } elseif (session_status() === PHP_SESSION_NONE && headers_sent()) {
-    // Fallback: Wenn Headers bereits gesendet wurden, logge es
     error_log("Warning: Tried to start session but headers already sent");
 }
 
@@ -48,6 +83,9 @@ if (!file_exists(BACKGROUND_PATH)) {
 }
 if (!file_exists('logs')) {
     mkdir('logs', 0777, true);
+}
+if (AUDIT_LOG_ENABLED && !file_exists(AUDIT_LOG_PATH)) {
+    mkdir(AUDIT_LOG_PATH, 0777, true);
 }
 
 // Datenbank Verbindung
@@ -84,12 +122,431 @@ class Database {
     }
 }
 
-// RBAC - Authentifizierung und Rechteverwaltung
+// ===== NEUE KLASSE: Session-Manager =====
+class SessionManager {
+    
+    /**
+     * Prüft Session-Timeout
+     */
+    public static function checkTimeout() {
+        if (!isset($_SESSION['user_id'])) {
+            return;
+        }
+        
+        $currentTime = time();
+        
+        // Session-Start-Zeit setzen
+        if (!isset($_SESSION['session_started'])) {
+            $_SESSION['session_started'] = $currentTime;
+        }
+        
+        // Letzte Aktivität setzen
+        if (!isset($_SESSION['last_activity'])) {
+            $_SESSION['last_activity'] = $currentTime;
+        }
+        
+        // Timeout prüfen
+        $inactiveTime = $currentTime - $_SESSION['last_activity'];
+        
+        if ($inactiveTime > SESSION_TIMEOUT) {
+            AuditLogger::log('session_timeout', 'Session expired due to inactivity', [
+                'inactive_seconds' => $inactiveTime,
+                'session_duration' => $currentTime - $_SESSION['session_started']
+            ]);
+            
+            Auth::logout();
+            
+            // JSON-Response für AJAX
+            if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 
+                strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
+                http_response_code(401);
+                exit(json_encode([
+                    'success' => false, 
+                    'message' => 'Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an.',
+                    'session_expired' => true
+                ]));
+            }
+            
+            // Normale Seite - Weiterleitung
+            header('Location: index.php?session_expired=1');
+            exit;
+        }
+        
+        // Aktivitätszeitpunkt aktualisieren
+        $_SESSION['last_activity'] = $currentTime;
+        
+        // Session-ID regenerieren alle 30 Minuten
+        if (!isset($_SESSION['last_regeneration'])) {
+            $_SESSION['last_regeneration'] = $currentTime;
+        } elseif ($currentTime - $_SESSION['last_regeneration'] > 1800) {
+            session_regenerate_id(true);
+            $_SESSION['last_regeneration'] = $currentTime;
+        }
+    }
+    
+    /**
+     * Gibt verbleibende Session-Zeit zurück
+     */
+    public static function getRemainingTime() {
+        if (!isset($_SESSION['last_activity'])) {
+            return 0;
+        }
+        
+        $remaining = SESSION_TIMEOUT - (time() - $_SESSION['last_activity']);
+        return max(0, $remaining);
+    }
+    
+    /**
+     * Verlängert die Session (bei Benutzeraktivität)
+     */
+    public static function extendSession() {
+        if (isset($_SESSION['user_id'])) {
+            $_SESSION['last_activity'] = time();
+        }
+    }
+}
+
+// ===== NEUE KLASSE: Login-Attempts-Manager =====
+class LoginAttemptsManager {
+    
+    /**
+     * Prüft ob IP gesperrt ist
+     */
+    public static function isIpLocked($ip) {
+        $db = Database::getInstance()->getConnection();
+        
+        $stmt = $db->prepare("
+            SELECT locked_until 
+            FROM login_attempts 
+            WHERE ip_address = ? 
+            AND locked_until > NOW()
+            LIMIT 1
+        ");
+        $stmt->execute([$ip]);
+        
+        return $stmt->fetch() !== false;
+    }
+    
+    /**
+     * Gibt verbleibende Sperrzeit zurück (in Sekunden)
+     */
+    public static function getRemainingLockTime($ip) {
+        $db = Database::getInstance()->getConnection();
+        
+        $stmt = $db->prepare("
+            SELECT TIMESTAMPDIFF(SECOND, NOW(), locked_until) as remaining 
+            FROM login_attempts 
+            WHERE ip_address = ? 
+            AND locked_until > NOW()
+            LIMIT 1
+        ");
+        $stmt->execute([$ip]);
+        $result = $stmt->fetch();
+        
+        return $result ? max(0, $result['remaining']) : 0;
+    }
+    
+    /**
+     * Registriert fehlgeschlagenen Login-Versuch
+     */
+    public static function recordFailedAttempt($username, $ip) {
+        $db = Database::getInstance()->getConnection();
+        
+        // Fehlversuch speichern
+        $stmt = $db->prepare("
+            INSERT INTO login_attempts 
+            (username, ip_address, attempt_time, success) 
+            VALUES (?, ?, NOW(), 0)
+        ");
+        $stmt->execute([$username, $ip]);
+        
+        // Anzahl Fehlversuche im Zeitfenster prüfen
+        $stmt = $db->prepare("
+            SELECT COUNT(*) as attempt_count 
+            FROM login_attempts 
+            WHERE ip_address = ? 
+            AND success = 0 
+            AND attempt_time > DATE_SUB(NOW(), INTERVAL ? SECOND)
+        ");
+        $stmt->execute([$ip, LOGIN_ATTEMPT_WINDOW]);
+        $result = $stmt->fetch();
+        
+        $attemptCount = $result['attempt_count'];
+        
+        // IP sperren wenn zu viele Versuche
+        if ($attemptCount >= MAX_LOGIN_ATTEMPTS) {
+            $stmt = $db->prepare("
+                UPDATE login_attempts 
+                SET locked_until = DATE_ADD(NOW(), INTERVAL ? SECOND)
+                WHERE ip_address = ?
+            ");
+            $stmt->execute([LOGIN_LOCKOUT_TIME, $ip]);
+            
+            AuditLogger::log('ip_locked', "IP locked after $attemptCount failed login attempts", [
+                'ip_address' => $ip,
+                'username' => $username,
+                'attempt_count' => $attemptCount,
+                'lockout_seconds' => LOGIN_LOCKOUT_TIME
+            ]);
+            
+            return true; // IP wurde gesperrt
+        }
+        
+        return false; // IP noch nicht gesperrt
+    }
+    
+    /**
+     * Registriert erfolgreichen Login
+     */
+    public static function recordSuccessfulLogin($username, $ip) {
+        $db = Database::getInstance()->getConnection();
+        
+        // Erfolgreichen Login speichern
+        $stmt = $db->prepare("
+            INSERT INTO login_attempts 
+            (username, ip_address, attempt_time, success) 
+            VALUES (?, ?, NOW(), 1)
+        ");
+        $stmt->execute([$username, $ip]);
+        
+        // Alte Fehlversuche für diese IP löschen
+        $stmt = $db->prepare("
+            DELETE FROM login_attempts 
+            WHERE ip_address = ? 
+            AND success = 0
+        ");
+        $stmt->execute([$ip]);
+    }
+    
+    /**
+     * Gibt verbleibende Login-Versuche zurück
+     */
+    public static function getRemainingAttempts($ip) {
+        $db = Database::getInstance()->getConnection();
+        
+        $stmt = $db->prepare("
+            SELECT COUNT(*) as attempt_count 
+            FROM login_attempts 
+            WHERE ip_address = ? 
+            AND success = 0 
+            AND attempt_time > DATE_SUB(NOW(), INTERVAL ? SECOND)
+        ");
+        $stmt->execute([$ip, LOGIN_ATTEMPT_WINDOW]);
+        $result = $stmt->fetch();
+        
+        $attemptCount = $result['attempt_count'];
+        return max(0, MAX_LOGIN_ATTEMPTS - $attemptCount);
+    }
+    
+    /**
+     * Alte Login-Versuche aufräumen (Cronjob)
+     */
+    public static function cleanupOldAttempts() {
+        $db = Database::getInstance()->getConnection();
+        
+        // Alte Einträge löschen (älter als 30 Tage)
+        $stmt = $db->query("
+            DELETE FROM login_attempts 
+            WHERE attempt_time < DATE_SUB(NOW(), INTERVAL 30 DAY)
+        ");
+        
+        return $stmt->rowCount();
+    }
+}
+
+// ===== NEUE KLASSE: Audit-Logger =====
+class AuditLogger {
+    
+    /**
+     * Schreibt Audit-Log-Eintrag
+     * 
+     * @param string $action Art der Aktion
+     * @param string $description Beschreibung
+     * @param array $details Zusätzliche Details
+     * @param string $severity Schweregrad (info, warning, error, critical)
+     */
+    public static function log($action, $description = '', $details = [], $severity = 'info') {
+        if (!AUDIT_LOG_ENABLED) {
+            return;
+        }
+        
+        $userId = Auth::getUserId() ?? null;
+        $username = Auth::getUsername() ?? 'anonymous';
+        $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+        $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? 'unknown';
+        $requestUri = $_SERVER['REQUEST_URI'] ?? '';
+        $requestMethod = $_SERVER['REQUEST_METHOD'] ?? '';
+        
+        // In Datenbank schreiben
+        try {
+            $db = Database::getInstance()->getConnection();
+            
+            $stmt = $db->prepare("
+                INSERT INTO audit_log 
+                (user_id, username, ip_address, user_agent, action, description, 
+                 details, severity, request_uri, request_method, created_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+            ");
+            
+            $stmt->execute([
+                $userId,
+                $username,
+                $ip,
+                substr($userAgent, 0, 500),
+                $action,
+                $description,
+                json_encode($details, JSON_UNESCAPED_UNICODE),
+                $severity,
+                $requestUri,
+                $requestMethod
+            ]);
+            
+        } catch (Exception $e) {
+            error_log("Audit log database error: " . $e->getMessage());
+        }
+        
+        // Zusätzlich in Datei schreiben
+        try {
+            $timestamp = date('Y-m-d H:i:s');
+            $logFile = AUDIT_LOG_PATH . date('Y-m-d') . '.log';
+            
+            $logEntry = sprintf(
+                "[%s] [%s] User: %s (ID: %s) | IP: %s | Action: %s | %s | Details: %s\n",
+                $timestamp,
+                strtoupper($severity),
+                $username,
+                $userId ?? 'NULL',
+                $ip,
+                $action,
+                $description,
+                json_encode($details, JSON_UNESCAPED_UNICODE)
+            );
+            
+            file_put_contents($logFile, $logEntry, FILE_APPEND | LOCK_EX);
+            
+        } catch (Exception $e) {
+            error_log("Audit log file error: " . $e->getMessage());
+        }
+    }
+    
+    /**
+     * Sucht im Audit-Log
+     */
+    public static function search($filters = [], $limit = 100, $offset = 0) {
+        $db = Database::getInstance()->getConnection();
+        
+        $sql = "SELECT * FROM audit_log WHERE 1=1";
+        $params = [];
+        
+        if (!empty($filters['user_id'])) {
+            $sql .= " AND user_id = ?";
+            $params[] = $filters['user_id'];
+        }
+        
+        if (!empty($filters['username'])) {
+            $sql .= " AND username LIKE ?";
+            $params[] = '%' . $filters['username'] . '%';
+        }
+        
+        if (!empty($filters['ip_address'])) {
+            $sql .= " AND ip_address = ?";
+            $params[] = $filters['ip_address'];
+        }
+        
+        if (!empty($filters['action'])) {
+            $sql .= " AND action = ?";
+            $params[] = $filters['action'];
+        }
+        
+        if (!empty($filters['severity'])) {
+            $sql .= " AND severity = ?";
+            $params[] = $filters['severity'];
+        }
+        
+        if (!empty($filters['date_from'])) {
+            $sql .= " AND created_at >= ?";
+            $params[] = $filters['date_from'];
+        }
+        
+        if (!empty($filters['date_to'])) {
+            $sql .= " AND created_at <= ?";
+            $params[] = $filters['date_to'];
+        }
+        
+        $sql .= " ORDER BY created_at DESC LIMIT ? OFFSET ?";
+        $params[] = $limit;
+        $params[] = $offset;
+        
+        $stmt = $db->prepare($sql);
+        $stmt->execute($params);
+        
+        return $stmt->fetchAll();
+    }
+    
+    /**
+     * Alte Audit-Logs aufräumen
+     */
+    public static function cleanup() {
+        $db = Database::getInstance()->getConnection();
+        
+        $stmt = $db->prepare("
+            DELETE FROM audit_log 
+            WHERE created_at < DATE_SUB(NOW(), INTERVAL ? DAY)
+        ");
+        $stmt->execute([AUDIT_LOG_RETENTION_DAYS]);
+        
+        $deletedRows = $stmt->rowCount();
+        
+        // Datei-Logs älter als Retention-Periode löschen
+        $files = glob(AUDIT_LOG_PATH . '*.log');
+        $cutoffDate = strtotime('-' . AUDIT_LOG_RETENTION_DAYS . ' days');
+        $deletedFiles = 0;
+        
+        foreach ($files as $file) {
+            if (filemtime($file) < $cutoffDate) {
+                unlink($file);
+                $deletedFiles++;
+            }
+        }
+        
+        return [
+            'deleted_rows' => $deletedRows,
+            'deleted_files' => $deletedFiles
+        ];
+    }
+}
+
+// RBAC - Authentifizierung und Rechteverwaltung (ERWEITERT)
 class Auth {
     
     private static $userPermissionsCache = null;
     
     public static function login($username, $password) {
+        $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+        
+        // IP-Whitelist prüfen (wenn konfiguriert)
+        if (!empty(IP_WHITELIST) && !in_array($ip, IP_WHITELIST)) {
+            AuditLogger::log('login_blocked', 'Login attempt from non-whitelisted IP', [
+                'ip_address' => $ip,
+                'username' => $username
+            ], 'warning');
+            return false;
+        }
+        
+        // IP-Sperre prüfen
+        if (LoginAttemptsManager::isIpLocked($ip)) {
+            $remainingTime = LoginAttemptsManager::getRemainingLockTime($ip);
+            $minutes = ceil($remainingTime / 60);
+            
+            AuditLogger::log('login_blocked', 'Login attempt from locked IP', [
+                'ip_address' => $ip,
+                'username' => $username,
+                'remaining_seconds' => $remainingTime
+            ], 'warning');
+            
+            throw new Exception("Zu viele fehlgeschlagene Login-Versuche. Bitte versuchen Sie es in $minutes Minute(n) erneut.");
+        }
+        
         $db = Database::getInstance()->getConnection();
         
         $stmt = $db->prepare("
@@ -102,23 +559,52 @@ class Auth {
         $user = $stmt->fetch();
         
         if ($user && password_verify($password, $user['password'])) {
+            // Erfolgreicher Login
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['username'] = $user['username'];
             $_SESSION['role_id'] = $user['role_id'];
             $_SESSION['role_name'] = $user['role_name'];
             $_SESSION['role_display_name'] = $user['role_display_name'];
+            $_SESSION['session_started'] = time();
+            $_SESSION['last_activity'] = time();
+            $_SESSION['last_regeneration'] = time();
+            $_SESSION['login_ip'] = $ip;
             
             $updateStmt = $db->prepare("UPDATE users SET last_login = NOW() WHERE id = ?");
             $updateStmt->execute([$user['id']]);
             
             self::loadUserPermissions();
             
+            LoginAttemptsManager::recordSuccessfulLogin($username, $ip);
+            
+            AuditLogger::log('login_success', 'User logged in successfully', [
+                'username' => $username,
+                'role' => $user['role_name']
+            ], 'info');
+            
             return true;
         }
+        
+        // Fehlgeschlagener Login
+        $locked = LoginAttemptsManager::recordFailedAttempt($username, $ip);
+        $remaining = LoginAttemptsManager::getRemainingAttempts($ip);
+        
+        AuditLogger::log('login_failed', 'Failed login attempt', [
+            'username' => $username,
+            'remaining_attempts' => $remaining,
+            'ip_locked' => $locked
+        ], 'warning');
+        
         return false;
     }
     
     public static function logout() {
+        if (self::isLoggedIn()) {
+            AuditLogger::log('logout', 'User logged out', [
+                'session_duration' => time() - ($_SESSION['session_started'] ?? time())
+            ]);
+        }
+        
         session_destroy();
     }
     
@@ -199,6 +685,11 @@ class Auth {
     public static function requirePermission($permission, $errorMessage = null) {
         if (!self::hasPermission($permission)) {
             $message = $errorMessage ?? "Fehlende Berechtigung: " . $permission;
+            
+            AuditLogger::log('permission_denied', $message, [
+                'required_permission' => $permission
+            ], 'warning');
+            
             http_response_code(403);
             exit(json_encode(['success' => false, 'message' => $message]));
         }
@@ -207,6 +698,11 @@ class Auth {
     public static function requireAnyPermission($permissions, $errorMessage = null) {
         if (!self::hasAnyPermission($permissions)) {
             $message = $errorMessage ?? "Sie haben keine der erforderlichen Berechtigungen";
+            
+            AuditLogger::log('permission_denied', $message, [
+                'required_permissions' => $permissions
+            ], 'warning');
+            
             http_response_code(403);
             exit(json_encode(['success' => false, 'message' => $message]));
         }
@@ -215,6 +711,11 @@ class Auth {
     public static function requireAllPermissions($permissions, $errorMessage = null) {
         if (!self::hasAllPermissions($permissions)) {
             $message = $errorMessage ?? "Sie haben nicht alle erforderlichen Berechtigungen";
+            
+            AuditLogger::log('permission_denied', $message, [
+                'required_permissions' => $permissions
+            ], 'warning');
+            
             http_response_code(403);
             exit(json_encode(['success' => false, 'message' => $message]));
         }
@@ -230,6 +731,7 @@ class Auth {
     public static function requireAdmin() {
         self::requireLogin();
         if (!self::isAdmin()) {
+            AuditLogger::log('admin_required', 'Admin access denied', [], 'warning');
             http_response_code(403);
             exit(json_encode(['success' => false, 'message' => 'Administrator-Berechtigung erforderlich']));
         }
@@ -262,6 +764,9 @@ class Auth {
         return self::$userPermissionsCache;
     }
 }
+
+// [REST DER KLASSEN BLEIBEN UNVERÄNDERT]
+// ... RoleManager, MaintenanceManager, EmailManager, ImageHelper, CategoryHelper, ImageGallery ...
 
 // Rollen-Verwaltung
 class RoleManager {
@@ -337,6 +842,13 @@ class RoleManager {
             }
             
             $db->commit();
+            
+            AuditLogger::log('role_created', "Role created: $displayName", [
+                'role_id' => $roleId,
+                'role_name' => $name,
+                'permissions_count' => count($permissions)
+            ]);
+            
             return $roleId;
             
         } catch (Exception $e) {
@@ -371,6 +883,12 @@ class RoleManager {
             
             $db->commit();
             
+            AuditLogger::log('role_updated', "Role updated: $displayName", [
+                'role_id' => $roleId,
+                'role_name' => $role['name'],
+                'permissions_count' => count($permissions)
+            ]);
+            
         } catch (Exception $e) {
             $db->rollBack();
             throw $e;
@@ -399,6 +917,11 @@ class RoleManager {
         
         $stmt = $db->prepare("DELETE FROM roles WHERE id = ?");
         $stmt->execute([$roleId]);
+        
+        AuditLogger::log('role_deleted', "Role deleted: {$role['display_name']}", [
+            'role_id' => $roleId,
+            'role_name' => $role['name']
+        ]);
     }
     
     private static function updateRolePermissions($roleId, $permissions) {
@@ -506,7 +1029,6 @@ class EmailManager {
         
         $success = mail($to, $subject, $message, $headers);
         
-        // Log E-Mail
         self::logEmail($to, $subject, $message, $success, $logType);
         
         return $success;
@@ -768,22 +1290,9 @@ function handleError($message, $code = 500) {
     exit;
 }
 
-// Logging
+// Logging (Legacy - für Kompatibilität)
 function logActivity($action, $details = '') {
-    try {
-        $logFile = 'logs/' . date('Y-m-d') . '.log';
-        
-        $timestamp = date('Y-m-d H:i:s');
-        $userId = $_SESSION['user_id'] ?? 'anonymous';
-        $username = $_SESSION['username'] ?? 'anonymous';
-        $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
-        
-        $logEntry = "[$timestamp] User: $username (ID: $userId) | IP: $ip | Action: $action | Details: $details" . PHP_EOL;
-        
-        file_put_contents($logFile, $logEntry, FILE_APPEND | LOCK_EX);
-    } catch (Exception $e) {
-        error_log("Logging error: " . $e->getMessage());
-    }
+    AuditLogger::log($action, $details);
 }
 
 // Zusätzliche Validierungsfunktionen
@@ -856,7 +1365,6 @@ class CategoryHelper {
                 ];
             }
         }
-        // Fallback
         return [
             'name' => $categoryName,
             'display_name' => ucfirst($categoryName),
@@ -886,5 +1394,116 @@ class CategoryHelper {
         ");
         $userId = Auth::getUserId();
         $stmt->execute([$color, $userId, $color, $userId]);
+        
+        AuditLogger::log('setting_changed', 'Storage device color changed', [
+            'setting_key' => 'storage_device_color',
+            'new_value' => $color
+        ]);
+    }
+}
+
+/**
+ * Bildergalerie-Manager für Objekte
+ */
+class ImageGallery {
+    
+    /**
+     * Holt alle Bilder eines Objekts
+     */
+    public static function getObjectImages($objectId) {
+        $db = Database::getInstance()->getConnection();
+        $stmt = $db->prepare("SELECT * FROM object_images WHERE object_id = ? ORDER BY sort_order ASC, id ASC");
+        $stmt->execute([$objectId]);
+        return $stmt->fetchAll();
+    }
+    
+    /**
+     * Fügt ein Bild hinzu
+     */
+    public static function addImage($objectId, $filePath, $sortOrder = null) {
+        $db = Database::getInstance()->getConnection();
+        
+        if ($sortOrder === null) {
+            $stmt = $db->prepare("SELECT MAX(sort_order) FROM object_images WHERE object_id = ?");
+            $stmt->execute([$objectId]);
+            $maxOrder = $stmt->fetchColumn();
+            $sortOrder = ($maxOrder !== null) ? $maxOrder + 1 : 0;
+        }
+        
+        $stmt = $db->prepare("INSERT INTO object_images (object_id, image_path, sort_order) VALUES (?, ?, ?)");
+        $stmt->execute([$objectId, $filePath, $sortOrder]);
+        
+        $imageId = $db->lastInsertId();
+        
+        AuditLogger::log('image_added', "Image added to object", [
+            'object_id' => $objectId,
+            'image_id' => $imageId,
+            'file_path' => $filePath
+        ]);
+        
+        return $imageId;
+    }
+    
+    /**
+     * Löscht ein Bild
+     */
+    public static function deleteImage($imageId) {
+        $db = Database::getInstance()->getConnection();
+        
+        $stmt = $db->prepare("SELECT image_path, object_id FROM object_images WHERE id = ?");
+        $stmt->execute([$imageId]);
+        $image = $stmt->fetch();
+        
+        if ($image) {
+            if ($image['image_path'] && file_exists($image['image_path'])) {
+                unlink($image['image_path']);
+            }
+            
+            $stmt = $db->prepare("DELETE FROM object_images WHERE id = ?");
+            $stmt->execute([$imageId]);
+            
+            AuditLogger::log('image_deleted', "Image deleted from object", [
+                'object_id' => $image['object_id'],
+                'image_id' => $imageId
+            ]);
+        }
+    }
+    
+    /**
+     * Ändert die Reihenfolge
+     */
+    public static function reorderImages($objectId, $imageIds) {
+        $db = Database::getInstance()->getConnection();
+        
+        try {
+            $db->beginTransaction();
+            
+            $stmt = $db->prepare("UPDATE object_images SET sort_order = ? WHERE id = ? AND object_id = ?");
+            
+            foreach ($imageIds as $index => $imageId) {
+                $stmt->execute([$index, $imageId, $objectId]);
+            }
+            
+            $db->commit();
+            
+            AuditLogger::log('images_reordered', "Images reordered for object", [
+                'object_id' => $objectId,
+                'image_count' => count($imageIds)
+            ]);
+            
+        } catch (Exception $e) {
+            $db->rollBack();
+            throw $e;
+        }
+    }
+    
+    /**
+     * Löscht alle Bilder eines Objekts
+     */
+    public static function deleteAllImages($objectId) {
+        $images = self::getObjectImages($objectId);
+        foreach ($images as $image) {
+            self::deleteImage($image['id']);
+        }
     }
 }

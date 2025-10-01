@@ -36,3 +36,6 @@
 [2025-09-30 20:02:22] User: admin (ID: 1) | IP: 109.43.113.140 | Action: login | Details: Successful login
 [2025-09-30 20:02:49] User: admin (ID: 1) | IP: 109.43.113.140 | Action: user_updated | Details: User updated: admin (ID: 1)
 [2025-09-30 20:29:55] User: admin (ID: 1) | IP: 109.43.113.140 | Action: test_email_sent | Details: Test email notification sent to: doofwiescheisse@outlook.de
+[2025-09-30 21:56:34] User: admin (ID: 1) | IP: 109.43.115.64 | Action: permissions_fixed | Details: Category permissions were fixed by admin
+[2025-09-30 21:56:49] User: admin (ID: 1) | IP: 109.43.115.64 | Action: logout | Details: User logged out
+[2025-09-30 21:56:59] User: admin (ID: 1) | IP: 109.43.115.64 | Action: login | Details: Successful login
