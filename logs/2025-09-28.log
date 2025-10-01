@@ -1,0 +1,59 @@
+[2025-09-28 07:08:09] User: admin (ID: 1) | IP: 109.43.114.41 | Action: object_deleted | Details: Object deleted: Bühne H8 (ID: 8)
+[2025-09-28 07:35:43] User: admin (ID: 1) | IP: 109.43.114.41 | Action: object_deleted | Details: Object deleted: Lichtmast B2 (ID: 2)
+[2025-09-28 07:35:50] User: admin (ID: 1) | IP: 109.43.114.41 | Action: object_deleted | Details: Object deleted: Kompressor D4 (ID: 4)
+[2025-09-28 07:35:54] User: admin (ID: 1) | IP: 109.43.114.41 | Action: object_deleted | Details: Object deleted: Beleuchtung E5 (ID: 5)
+[2025-09-28 07:35:58] User: admin (ID: 1) | IP: 109.43.114.41 | Action: object_deleted | Details: Object deleted: Generator A1 (ID: 1)
+[2025-09-28 07:36:10] User: admin (ID: 1) | IP: 109.43.114.41 | Action: settings_updated | Details: Map display settings updated: {"marker_size":15,"marker_border_width":1,"marker_hover_scale":1.100000000000000088817841970012523233890533447265625,"tooltip_delay":0,"auto_save_interval":30,"marker_shadow_intensity":0.299999999999999988897769753748434595763683319091796875,"interface_theme":"dark","show_legend":true,"show_coordinates":true,"enable_marker_pulse":false,"background_blur_admin":false,"enable_notifications":false}
+[2025-09-28 07:36:34] User: admin (ID: 1) | IP: 109.43.114.41 | Action: settings_updated | Details: Map display settings updated: {"marker_size":15,"marker_border_width":1,"marker_hover_scale":1.100000000000000088817841970012523233890533447265625,"tooltip_delay":0,"auto_save_interval":30,"marker_shadow_intensity":0.299999999999999988897769753748434595763683319091796875,"interface_theme":"dark","show_legend":true,"show_coordinates":true,"enable_marker_pulse":false,"background_blur_admin":false,"enable_notifications":true}
+[2025-09-28 07:36:54] User: admin (ID: 1) | IP: 109.43.114.41 | Action: settings_updated | Details: Map display settings updated: {"marker_size":15,"marker_border_width":1,"marker_hover_scale":1.100000000000000088817841970012523233890533447265625,"tooltip_delay":0,"auto_save_interval":30,"marker_shadow_intensity":0.299999999999999988897769753748434595763683319091796875,"interface_theme":"dark","show_legend":true,"show_coordinates":true,"enable_marker_pulse":false,"background_blur_admin":false,"enable_notifications":true}
+[2025-09-28 12:32:38] User: admin (ID: 1) | IP: 109.43.114.41 | Action: position_updated | Details: Position updated for object ID: 3 to 35.31%, 40.984%
+[2025-09-28 12:32:44] User: admin (ID: 1) | IP: 109.43.114.41 | Action: position_updated | Details: Position updated for object ID: 7 to 36.752%, 40.027%
+[2025-09-28 12:33:08] User: admin (ID: 1) | IP: 109.43.114.41 | Action: settings_updated | Details: Map display settings updated: {"marker_size":12,"marker_border_width":1,"marker_hover_scale":1.100000000000000088817841970012523233890533447265625,"tooltip_delay":0,"auto_save_interval":30,"marker_shadow_intensity":0.299999999999999988897769753748434595763683319091796875,"interface_theme":"dark","show_legend":true,"show_coordinates":true,"enable_marker_pulse":false,"background_blur_admin":false,"enable_notifications":true}
+[2025-09-28 12:33:30] User: admin (ID: 1) | IP: 109.43.114.41 | Action: settings_updated | Details: Map display settings updated: {"marker_size":21,"marker_border_width":1,"marker_hover_scale":1.100000000000000088817841970012523233890533447265625,"tooltip_delay":0,"auto_save_interval":30,"marker_shadow_intensity":0.299999999999999988897769753748434595763683319091796875,"interface_theme":"dark","show_legend":true,"show_coordinates":true,"enable_marker_pulse":false,"background_blur_admin":false,"enable_notifications":true}
+[2025-09-28 12:33:42] User: admin (ID: 1) | IP: 109.43.114.41 | Action: settings_updated | Details: Map display settings updated: {"marker_size":12,"marker_border_width":1,"marker_hover_scale":1.100000000000000088817841970012523233890533447265625,"tooltip_delay":0,"auto_save_interval":30,"marker_shadow_intensity":0.299999999999999988897769753748434595763683319091796875,"interface_theme":"dark","show_legend":true,"show_coordinates":true,"enable_marker_pulse":false,"background_blur_admin":false,"enable_notifications":true}
+[2025-09-28 12:33:44] User: admin (ID: 1) | IP: 109.43.114.41 | Action: settings_updated | Details: Map display settings updated: {"marker_size":12,"marker_border_width":1,"marker_hover_scale":1.100000000000000088817841970012523233890533447265625,"tooltip_delay":0,"auto_save_interval":30,"marker_shadow_intensity":0.299999999999999988897769753748434595763683319091796875,"interface_theme":"dark","show_legend":true,"show_coordinates":true,"enable_marker_pulse":false,"background_blur_admin":false,"enable_notifications":true}
+[2025-09-28 12:37:34] User: admin (ID: 1) | IP: 109.43.114.41 | Action: position_updated | Details: Position updated for object ID: 3 to 34.833%, 41.569%
+[2025-09-28 12:37:38] User: admin (ID: 1) | IP: 109.43.114.41 | Action: position_updated | Details: Position updated for object ID: 7 to 35.549%, 41.078%
+[2025-09-28 12:37:43] User: admin (ID: 1) | IP: 109.43.114.41 | Action: position_updated | Details: Position updated for object ID: 7 to 35.524%, 41.12%
+[2025-09-28 12:37:45] User: admin (ID: 1) | IP: 109.43.114.41 | Action: status_set | Details: Status set to rented for object 'Werkzeugkoffer G7' (ID: 7)
+[2025-09-28 12:37:47] User: admin (ID: 1) | IP: 109.43.114.41 | Action: status_set | Details: Status set to maintenance for object 'Werkzeugkoffer G7' (ID: 7)
+[2025-09-28 12:37:49] User: admin (ID: 1) | IP: 109.43.114.41 | Action: status_set | Details: Status set to available for object 'Werkzeugkoffer G7' (ID: 7)
+[2025-09-28 12:38:06] User: admin (ID: 1) | IP: 109.43.114.41 | Action: object_updated | Details: Object updated: Werkzeugkoffer G7 (ID: 7)
+[2025-09-28 12:38:07] User: admin (ID: 1) | IP: 109.43.114.41 | Action: position_updated | Details: Position updated for object ID: 7 to 35.524%, 41.12%
+[2025-09-28 12:38:09] User: admin (ID: 1) | IP: 109.43.114.41 | Action: position_updated | Details: Position updated for object ID: 3 to 34.829%, 41.53%
+[2025-09-28 12:38:17] User: admin (ID: 1) | IP: 109.43.114.41 | Action: position_updated | Details: Position updated for object ID: 7 to 35.524%, 41.12%
+[2025-09-28 12:38:26] User: admin (ID: 1) | IP: 109.43.114.41 | Action: position_updated | Details: Position updated for object ID: 3 to 34.829%, 41.53%
+[2025-09-28 12:38:35] User: admin (ID: 1) | IP: 109.43.114.41 | Action: object_updated | Details: Object updated: Container C3 (ID: 3)
+[2025-09-28 12:38:37] User: admin (ID: 1) | IP: 109.43.114.41 | Action: position_updated | Details: Position updated for object ID: 3 to 34.829%, 41.53%
+[2025-09-28 12:57:31] User: admin (ID: 1) | IP: 109.43.114.41 | Action: position_updated | Details: Position updated for object ID: 3 to 34.829%, 41.53%
+[2025-09-28 12:57:42] User: admin (ID: 1) | IP: 109.43.114.41 | Action: position_updated | Details: Position updated for object ID: 3 to 34.829%, 41.53%
+[2025-09-28 12:57:47] User: admin (ID: 1) | IP: 109.43.114.41 | Action: position_updated | Details: Position updated for object ID: 3 to 34.833%, 41.569%
+[2025-09-28 13:11:52] User: admin (ID: 1) | IP: 109.43.114.41 | Action: position_updated | Details: Position updated for object ID: 7 to 35.524%, 41.12%
+[2025-09-28 13:12:01] User: admin (ID: 1) | IP: 109.43.114.41 | Action: position_updated | Details: Position updated for object ID: 3 to 34.829%, 41.53%
+[2025-09-28 13:12:06] User: admin (ID: 1) | IP: 109.43.114.41 | Action: position_updated | Details: Position updated for object ID: 7 to 35.51%, 41.078%
+[2025-09-28 13:35:48] User: admin (ID: 1) | IP: 109.43.114.41 | Action: position_updated | Details: Position updated for object ID: 5 to 15.278%, 82.787%
+[2025-09-28 13:35:51] User: admin (ID: 1) | IP: 109.43.114.41 | Action: object_deleted | Details: Object deleted: Beleuchtung E5 (ID: 5)
+[2025-09-28 13:35:53] User: admin (ID: 1) | IP: 109.43.114.41 | Action: position_updated | Details: Position updated for object ID: 1 to 25.481%, 35.792%
+[2025-09-28 13:35:55] User: admin (ID: 1) | IP: 109.43.114.41 | Action: object_deleted | Details: Object deleted: Generator A1 (ID: 1)
+[2025-09-28 13:35:57] User: admin (ID: 1) | IP: 109.43.114.41 | Action: position_updated | Details: Position updated for object ID: 7 to 35.524%, 41.12%
+[2025-09-28 13:38:16] User: admin (ID: 1) | IP: 109.43.114.41 | Action: position_updated | Details: Position updated for object ID: 6 to 55.609%, 44.262%
+[2025-09-28 13:38:19] User: admin (ID: 1) | IP: 109.43.114.41 | Action: object_deleted | Details: Object deleted: Audio-Anlage F6 (ID: 6)
+[2025-09-28 13:38:21] User: admin (ID: 1) | IP: 109.43.114.41 | Action: position_updated | Details: Position updated for object ID: 2 to 65.224%, 22.131%
+[2025-09-28 13:38:24] User: admin (ID: 1) | IP: 109.43.114.41 | Action: object_deleted | Details: Object deleted: Lichtmast B2 (ID: 2)
+[2025-09-28 13:38:25] User: admin (ID: 1) | IP: 109.43.114.41 | Action: position_updated | Details: Position updated for object ID: 4 to 78.9%, 15.574%
+[2025-09-28 13:38:28] User: admin (ID: 1) | IP: 109.43.114.41 | Action: object_deleted | Details: Object deleted: Generator D4 (ID: 4)
+[2025-09-28 13:38:31] User: admin (ID: 1) | IP: 109.43.114.41 | Action: position_updated | Details: Position updated for object ID: 7 to 35.524%, 41.12%
+[2025-09-28 13:38:35] User: admin (ID: 1) | IP: 109.43.114.41 | Action: object_deleted | Details: Object deleted: Werkzeugkoffer G7 (ID: 7)
+[2025-09-28 13:38:37] User: admin (ID: 1) | IP: 109.43.114.41 | Action: position_updated | Details: Position updated for object ID: 3 to 34.829%, 41.53%
+[2025-09-28 13:38:40] User: admin (ID: 1) | IP: 109.43.114.41 | Action: object_deleted | Details: Object deleted: Container C3 (ID: 3)
+[2025-09-28 13:38:53] User: admin (ID: 1) | IP: 109.43.114.41 | Action: object_created | Details: Object created: Test (ID: 9) at 35.524%, 41.94%
+[2025-09-28 13:38:55] User: admin (ID: 1) | IP: 109.43.114.41 | Action: position_updated | Details: Position updated for object ID: 9 to 35.524%, 41.94%
+[2025-09-28 20:27:56] User: admin (ID: 1) | IP: 109.43.114.41 | Action: position_updated | Details: Position updated for object ID: 8 to 36.432%, 41.393%
+[2025-09-28 20:28:06] User: admin (ID: 1) | IP: 109.43.114.41 | Action: position_updated | Details: Position updated for object ID: 8 to 36.432%, 41.393%
+[2025-09-28 20:29:25] User: admin (ID: 1) | IP: 109.43.114.41 | Action: position_updated | Details: Position updated for object ID: 8 to 36.425%, 41.373%
+[2025-09-28 20:29:30] User: admin (ID: 1) | IP: 109.43.114.41 | Action: position_updated | Details: Position updated for object ID: 8 to 36.432%, 41.393%
+[2025-09-28 20:30:19] User: admin (ID: 1) | IP: 109.43.114.41 | Action: settings_updated | Details: Map display settings updated: {"marker_size":12,"marker_border_width":1,"marker_hover_scale":1.100000000000000088817841970012523233890533447265625,"tooltip_delay":0,"auto_save_interval":30,"marker_shadow_intensity":0.299999999999999988897769753748434595763683319091796875,"interface_theme":"auto","show_legend":true,"show_coordinates":true,"enable_marker_pulse":false,"background_blur_admin":false,"enable_notifications":true}
+[2025-09-28 20:30:25] User: admin (ID: 1) | IP: 109.43.114.41 | Action: position_updated | Details: Position updated for object ID: 8 to 36.432%, 41.393%
+[2025-09-28 20:30:50] User: admin (ID: 1) | IP: 109.43.114.41 | Action: position_updated | Details: Position updated for object ID: 8 to 36.425%, 41.373%
+[2025-09-28 20:30:59] User: admin (ID: 1) | IP: 109.43.114.41 | Action: position_updated | Details: Position updated for object ID: 9 to 35.524%, 41.94%
+[2025-09-28 21:05:23] User: admin (ID: 1) | IP: 109.43.114.41 | Action: position_updated | Details: Position updated for object ID: 8 to 36.266%, 41.176%

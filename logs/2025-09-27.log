@@ -1,0 +1,36 @@
+[2025-09-27 12:21:52] User: admin (ID: 1) | IP: 109.43.114.41 | Action: login | Details: Successful login
+[2025-09-27 12:22:17] User: admin (ID: 1) | IP: 109.43.114.41 | Action: background_uploaded | Details: Background image uploaded: background.png
+[2025-09-27 12:22:32] User: admin (ID: 1) | IP: 109.43.114.41 | Action: status_changed | Details: Status changed from available to rented (Object ID: 5)
+[2025-09-27 12:22:33] User: admin (ID: 1) | IP: 109.43.114.41 | Action: status_changed | Details: Status changed from rented to available (Object ID: 5)
+[2025-09-27 12:22:41] User: admin (ID: 1) | IP: 109.43.114.41 | Action: object_deleted | Details: Object deleted: Sound System F1 (ID: 5)
+[2025-09-27 12:22:54] User: admin (ID: 1) | IP: 109.43.114.41 | Action: status_changed | Details: Status changed from rented to available (Object ID: 2)
+[2025-09-27 12:22:55] User: admin (ID: 1) | IP: 109.43.114.41 | Action: status_changed | Details: Status changed from available to rented (Object ID: 2)
+[2025-09-27 12:22:56] User: admin (ID: 1) | IP: 109.43.114.41 | Action: status_changed | Details: Status changed from rented to available (Object ID: 2)
+[2025-09-27 12:23:01] User: admin (ID: 1) | IP: 109.43.114.41 | Action: object_deleted | Details: Object deleted: Lichtmast B2 (ID: 2)
+[2025-09-27 12:23:04] User: admin (ID: 1) | IP: 109.43.114.41 | Action: status_changed | Details: Status changed from maintenance to available (Object ID: 4)
+[2025-09-27 12:23:05] User: admin (ID: 1) | IP: 109.43.114.41 | Action: status_changed | Details: Status changed from available to rented (Object ID: 4)
+[2025-09-27 12:23:06] User: admin (ID: 1) | IP: 109.43.114.41 | Action: status_changed | Details: Status changed from rented to available (Object ID: 4)
+[2025-09-27 12:23:06] User: admin (ID: 1) | IP: 109.43.114.41 | Action: status_changed | Details: Status changed from available to rented (Object ID: 4)
+[2025-09-27 12:45:56] User: admin (ID: 1) | IP: 109.43.114.41 | Action: login | Details: Successful login
+[2025-09-27 13:17:28] User: admin (ID: 1) | IP: 109.43.114.41 | Action: status_set | Details: Status set to rented for object 'Generator A1' (ID: 1)
+[2025-09-27 13:17:29] User: admin (ID: 1) | IP: 109.43.114.41 | Action: status_set | Details: Status set to rented for object 'Generator A1' (ID: 1)
+[2025-09-27 13:17:40] User: admin (ID: 1) | IP: 109.43.114.41 | Action: status_set | Details: Status set to maintenance for object 'Generator A1' (ID: 1)
+[2025-09-27 13:17:56] User: admin (ID: 1) | IP: 109.43.114.41 | Action: status_set | Details: Status set to rented for object 'Generator A1' (ID: 1)
+[2025-09-27 13:29:02] User: admin (ID: 1) | IP: 109.43.114.41 | Action: status_set | Details: Status set to maintenance for object 'Generator A1' (ID: 1)
+[2025-09-27 13:29:02] User: admin (ID: 1) | IP: 109.43.114.41 | Action: status_set | Details: Status set to maintenance for object 'Generator A1' (ID: 1)
+[2025-09-27 13:29:08] User: admin (ID: 1) | IP: 109.43.114.41 | Action: status_set | Details: Status set to available for object 'Generator A1' (ID: 1)
+[2025-09-27 13:29:26] User: admin (ID: 1) | IP: 109.43.114.41 | Action: background_uploaded | Details: Background image uploaded: background.png
+[2025-09-27 13:29:48] User: admin (ID: 1) | IP: 109.43.114.41 | Action: background_uploaded | Details: Background image uploaded: background.png
+[2025-09-27 13:32:41] User: admin (ID: 1) | IP: 109.43.114.41 | Action: background_uploaded | Details: Background image uploaded: background.png
+[2025-09-27 13:37:43] User: admin (ID: 1) | IP: 109.43.114.41 | Action: background_uploaded | Details: Background image uploaded: background.png
+[2025-09-27 13:38:47] User: admin (ID: 1) | IP: 109.43.114.41 | Action: status_set | Details: Status set to available for object 'Beleuchtung E5' (ID: 4)
+[2025-09-27 20:06:15] User: admin (ID: 1) | IP: 109.43.114.41 | Action: status_set | Details: Status set to rented for object 'Beleuchtung E5' (ID: 4)
+[2025-09-27 20:06:15] User: admin (ID: 1) | IP: 109.43.114.41 | Action: status_set | Details: Status set to rented for object 'Beleuchtung E5' (ID: 4)
+[2025-09-27 20:07:01] User: admin (ID: 1) | IP: 109.43.114.41 | Action: background_uploaded | Details: Background image uploaded: background.png
+[2025-09-27 20:12:02] User: admin (ID: 1) | IP: 109.43.114.41 | Action: status_set | Details: Status set to rented for object 'Generator A1' (ID: 1)
+[2025-09-27 20:12:13] User: admin (ID: 1) | IP: 109.43.114.41 | Action: status_set | Details: Status set to rented for object 'Container C3' (ID: 3)
+[2025-09-27 20:24:23] User: admin (ID: 1) | IP: 109.43.114.41 | Action: object_deleted | Details: Object deleted: Container C3 (ID: 3)
+[2025-09-27 20:40:12] User: admin (ID: 1) | IP: 109.43.114.41 | Action: settings_updated | Details: Map display settings updated: {"marker_size":24,"marker_border_width":3,"marker_hover_scale":1.3000000000000000444089209850062616169452667236328125,"tooltip_delay":0,"auto_save_interval":30,"marker_shadow_intensity":0.299999999999999988897769753748434595763683319091796875,"interface_theme":"dark","show_legend":true,"show_coordinates":true,"enable_marker_pulse":true,"background_blur_admin":false,"enable_notifications":true}
+[2025-09-27 20:49:28] User: admin (ID: 1) | IP: 109.43.114.41 | Action: settings_updated | Details: Map display settings updated: {"marker_size":15,"marker_border_width":3,"marker_hover_scale":1.3000000000000000444089209850062616169452667236328125,"tooltip_delay":0,"auto_save_interval":30,"marker_shadow_intensity":0.299999999999999988897769753748434595763683319091796875,"interface_theme":"dark","show_legend":true,"show_coordinates":true,"enable_marker_pulse":true,"background_blur_admin":false,"enable_notifications":true}
+[2025-09-27 20:56:13] User: admin (ID: 1) | IP: 109.43.114.41 | Action: settings_updated | Details: Map display settings updated: {"marker_size":15,"marker_border_width":1,"marker_hover_scale":1.100000000000000088817841970012523233890533447265625,"tooltip_delay":0,"auto_save_interval":30,"marker_shadow_intensity":0.299999999999999988897769753748434595763683319091796875,"interface_theme":"dark","show_legend":true,"show_coordinates":true,"enable_marker_pulse":false,"background_blur_admin":false,"enable_notifications":true}
+[2025-09-27 21:01:28] User: admin (ID: 1) | IP: 109.43.114.41 | Action: login | Details: Successful login

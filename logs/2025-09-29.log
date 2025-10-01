@@ -1,0 +1,29 @@
+[2025-09-29 09:52:13] User: admin (ID: 1) | IP: 80.151.166.21 | Action: login | Details: Successful login
+[2025-09-29 10:15:50] User: admin (ID: 1) | IP: 80.151.166.21 | Action: login | Details: Successful login
+[2025-09-29 10:16:17] User: admin (ID: 1) | IP: 80.151.166.21 | Action: position_updated | Details: Position updated for object ID: 9 to 35.519%, 41.883%
+[2025-09-29 10:16:34] User: admin (ID: 1) | IP: 80.151.166.21 | Action: status_set | Details: Status set to rented for object 'Test' (ID: 9)
+[2025-09-29 10:16:36] User: admin (ID: 1) | IP: 80.151.166.21 | Action: status_set | Details: Status set to maintenance for object 'Test' (ID: 9)
+[2025-09-29 10:16:38] User: admin (ID: 1) | IP: 80.151.166.21 | Action: status_set | Details: Status set to available for object 'Test' (ID: 9)
+[2025-09-29 12:35:56] User: admin (ID: 1) | IP: 80.151.166.21 | Action: position_updated | Details: Position updated for object ID: 8 to 36.254%, 41.215%
+[2025-09-29 12:57:58] User: admin (ID: 1) | IP: 80.151.166.21 | Action: settings_updated | Details: Map display settings updated: {"marker_size":12,"marker_border_width":1,"marker_hover_scale":1.100000000000000088817841970012523233890533447265625,"tooltip_delay":0,"auto_save_interval":30,"marker_shadow_intensity":0.299999999999999988897769753748434595763683319091796875,"interface_theme":"auto","show_legend":true,"show_coordinates":true,"enable_marker_pulse":false,"background_blur_admin":false,"enable_notifications":true}
+[2025-09-29 12:58:34] User: admin (ID: 1) | IP: 80.151.166.21 | Action: settings_updated | Details: Map display settings updated: {"marker_size":14,"marker_border_width":1,"marker_hover_scale":1.100000000000000088817841970012523233890533447265625,"tooltip_delay":0,"auto_save_interval":30,"marker_shadow_intensity":0.299999999999999988897769753748434595763683319091796875,"interface_theme":"auto","show_legend":true,"show_coordinates":true,"enable_marker_pulse":false,"background_blur_admin":false,"enable_notifications":true}
+[2025-09-29 13:20:26] User: admin (ID: 1) | IP: 80.151.166.21 | Action: object_created | Details: Object created: Test (ID: 9)
+[2025-09-29 13:20:37] User: admin (ID: 1) | IP: 80.151.166.21 | Action: settings_updated | Details: Map display settings updated: {"marker_size":12,"marker_border_width":1,"marker_hover_scale":1.100000000000000088817841970012523233890533447265625,"tooltip_delay":0,"auto_save_interval":30,"marker_shadow_intensity":0.299999999999999988897769753748434595763683319091796875,"interface_theme":"auto","show_legend":true,"show_coordinates":true,"enable_marker_pulse":false,"background_blur_admin":false,"enable_notifications":true}
+[2025-09-29 15:32:05] User: admin (ID: 1) | IP: 80.151.166.21 | Action: search_objects | Details: Search: '', Status: 'all', Category: 'all', Results: 9
+[2025-09-29 15:32:20] User: admin (ID: 1) | IP: 80.151.166.21 | Action: search_objects | Details: Search: '', Status: 'all', Category: 'all', Results: 9
+[2025-09-29 15:33:30] User: admin (ID: 1) | IP: 80.151.166.21 | Action: search_objects | Details: Search: '', Status: 'all', Category: 'all', Results: 1
+[2025-09-29 15:52:56] User: admin (ID: 1) | IP: 80.151.166.21 | Action: search_objects | Details: Search: '', Status: 'all', Category: 'all', Results: 1
+[2025-09-29 15:59:05] User: admin (ID: 1) | IP: 80.151.166.21 | Action: search_objects | Details: Search: '', Status: 'all', Category: 'all', Results: 1
+[2025-09-29 20:37:15] User: admin (ID: 1) | IP: 109.43.114.41 | Action: settings_updated | Details: Map display settings updated
+[2025-09-29 20:37:44] User: admin (ID: 1) | IP: 109.43.114.41 | Action: object_deleted | Details: Object deleted: Container C3 (ID: 3)
+[2025-09-29 20:37:47] User: admin (ID: 1) | IP: 109.43.114.41 | Action: search_objects | Details: Search: '', Results: 7
+[2025-09-29 20:37:53] User: admin (ID: 1) | IP: 109.43.114.41 | Action: object_deleted | Details: Object deleted: Audio-Anlage F6 (ID: 6)
+[2025-09-29 20:37:53] User: admin (ID: 1) | IP: 109.43.114.41 | Action: search_objects | Details: Search: '', Results: 6
+[2025-09-29 20:37:57] User: admin (ID: 1) | IP: 109.43.114.41 | Action: object_deleted | Details: Object deleted: Beleuchtung E5 (ID: 5)
+[2025-09-29 20:37:57] User: admin (ID: 1) | IP: 109.43.114.41 | Action: search_objects | Details: Search: '', Results: 5
+[2025-09-29 20:38:02] User: admin (ID: 1) | IP: 109.43.114.41 | Action: object_deleted | Details: Object deleted: Generator A1 (ID: 1)
+[2025-09-29 20:38:03] User: admin (ID: 1) | IP: 109.43.114.41 | Action: search_objects | Details: Search: '', Results: 4
+[2025-09-29 20:38:06] User: admin (ID: 1) | IP: 109.43.114.41 | Action: object_deleted | Details: Object deleted: Generator D4 (ID: 4)
+[2025-09-29 20:38:06] User: admin (ID: 1) | IP: 109.43.114.41 | Action: search_objects | Details: Search: '', Results: 3
+[2025-09-29 20:38:10] User: admin (ID: 1) | IP: 109.43.114.41 | Action: search_objects | Details: Search: '', Results: 3
+[2025-09-29 20:38:49] User: admin (ID: 1) | IP: 109.43.114.41 | Action: object_created | Details: Object created: Test Aggregat (ID: 9)
