@@ -575,117 +575,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 echo json_encode(['success' => true, 'roles' => $roles]);
                 break;
                 
-            case 'upload_object_images':
-                Auth::requireLogin();
-                Auth::requirePermission('marker.edit');
-                
-                $objectId = intval($_POST['object_id'] ?? 0);
-                if ($objectId <= 0) {
-                    throw new Exception('Ungültige Objekt-ID');
-                }
-                
-                if (!isset($_FILES['images']) || empty($_FILES['images']['name'][0])) {
-                    throw new Exception('Keine Bilder hochgeladen');
-                }
-                
-                $uploadedImages = [];
-                $errors = [];
-                
-                // Multi-file Upload verarbeiten
-                $fileCount = count($_FILES['images']['name']);
-                
-                for ($i = 0; $i < $fileCount; $i++) {
-                    if ($_FILES['images']['error'][$i] === UPLOAD_ERR_OK) {
-                        try {
-                            $file = [
-                                'name' => $_FILES['images']['name'][$i],
-                                'type' => $_FILES['images']['type'][$i],
-                                'tmp_name' => $_FILES['images']['tmp_name'][$i],
-                                'error' => $_FILES['images']['error'][$i],
-                                'size' => $_FILES['images']['size'][$i]
-                            ];
-                            
-                            if (validateImageFile($file)) {
-                                $filePath = ImageHelper::handleImageUpload($file);
-                                $imageId = ImageGallery::addImage($objectId, $filePath);
-                                $uploadedImages[] = [
-                                    'id' => $imageId,
-                                    'path' => $filePath
-                                ];
-                            }
-                        } catch (Exception $e) {
-                            $errors[] = $_FILES['images']['name'][$i] . ': ' . $e->getMessage();
-                        }
-                    }
-                }
-                
-                logActivity('images_uploaded', "Uploaded " . count($uploadedImages) . " images for object #$objectId");
-                
-                echo json_encode([
-                    'success' => true,
-                    'uploaded' => $uploadedImages,
-                    'errors' => $errors,
-                    'count' => count($uploadedImages)
-                ]);
-                break;
-
-            case 'get_object_images':
-                Auth::requireLogin();
-                Auth::requirePermission('marker.view');
-                
-                $objectId = intval($_POST['object_id'] ?? 0);
-                if ($objectId <= 0) {
-                    throw new Exception('Ungültige Objekt-ID');
-                }
-                
-                $images = ImageGallery::getObjectImages($objectId);
-                
-                echo json_encode([
-                    'success' => true,
-                    'images' => $images
-                ]);
-                break;
-
-            case 'delete_object_image':
-                Auth::requireLogin();
-                Auth::requirePermission('marker.edit');
-                
-                $imageId = intval($_POST['image_id'] ?? 0);
-                if ($imageId <= 0) {
-                    throw new Exception('Ungültige Bild-ID');
-                }
-                
-                ImageGallery::deleteImage($imageId);
-                
-                logActivity('image_deleted', "Image #$imageId deleted");
-                
-                echo json_encode(['success' => true]);
-                break;
-
-            case 'reorder_images':
-                Auth::requireLogin();
-                Auth::requirePermission('marker.edit');
-                
-                $objectId = intval($_POST['object_id'] ?? 0);
-                $imageIds = $_POST['image_ids'] ?? [];
-                
-                if ($objectId <= 0 || empty($imageIds)) {
-                    throw new Exception('Ungültige Parameter');
-                }
-                
-                ImageGallery::reorderImages($objectId, $imageIds);
-                
-                echo json_encode(['success' => true]);
-                break;
-                        default:
-                            throw new Exception('Unbekannte Aktion');
-                    }
-                    
-                } catch (Exception $e) {
-                    echo json_encode(['success' => false, 'message' => $e->getMessage()]);
-                }
-                
-                exit;
+            default:
+                throw new Exception('Unbekannte Aktion');
+        }
+        
+    } catch (Exception $e) {
+        echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+    }
+    
+    exit;
 }
 
 // Daten für Frontend laden
@@ -1181,16 +1079,9 @@ $storageDeviceColor = CategoryHelper::getStorageDeviceColor();
                 </div>
                 
                 <div class="form-group">
-                    <label for="obj-images">Bilder (optional):</label>
-                    <div class="image-upload-zone" id="add-image-dropzone">
-                        <input type="file" id="obj-images" name="images[]" accept="image/*" multiple style="display: none;">
-                        <div class="dropzone-content">
-                            <div class="dropzone-icon">📁</div>
-                            <p class="dropzone-text">Bilder hierher ziehen oder klicken zum Auswählen</p>
-                            <small>Mehrere Bilder möglich - Max 2MB pro Bild</small>
-                        </div>
-                    </div>
-                    <div id="add-image-preview" class="image-preview-grid"></div>
+                    <label for="obj-image">Bild (optional):</label>
+                    <input type="file" id="obj-image" name="image" accept="image/*">
+                    <small>Empfohlene Größe: 128x128px</small>
                 </div>
                 
                 <div class="maintenance-section">
@@ -1279,16 +1170,9 @@ $storageDeviceColor = CategoryHelper::getStorageDeviceColor();
                 </div>
                 
                 <div class="form-group">
-                    <label>Bildergalerie:</label>
-                    <div class="image-upload-zone" id="edit-image-dropzone">
-                        <input type="file" id="edit-obj-images" name="images[]" accept="image/*" multiple style="display: none;">
-                        <div class="dropzone-content">
-                            <div class="dropzone-icon">📁</div>
-                            <p class="dropzone-text">Weitere Bilder hinzufügen</p>
-                            <small>Drag & Drop oder klicken</small>
-                        </div>
-                    </div>
-                    <div id="edit-image-gallery" class="image-gallery-manager"></div>
+                    <label for="edit-obj-image">Neues Bild (optional):</label>
+                    <input type="file" id="edit-obj-image" name="image" accept="image/*">
+                    <div id="current-image-preview" class="current-image-preview"></div>
                 </div>
                 
                 <div class="maintenance-section">
