@@ -1,0 +1,55 @@
+# Umgebungsvariablen (WICHTIG!)
+.env
+.env.local
+.env.*.local
+
+# Uploads und Generierte Dateien
+uploads/*
+!uploads/.gitkeep
+background/*
+!background/.gitkeep
+
+# Logs
+logs/*
+!logs/.gitkeep
+*.log
+
+# Session-Dateien
+sessions/*
+!sessions/.gitkeep
+
+# Cache
+cache/*
+!cache/.gitkeep
+
+# Composer
+/vendor/
+composer.lock
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Temp-Dateien
+tmp/*
+temp/*
+!tmp/.gitkeep
+!temp/.gitkeep
+
+# Backup-Dateien
+*.bak
+*.backup
+*.sql
+
+# Node (falls verwendet)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# OS
+Thumbs.db
+.DS_Store
